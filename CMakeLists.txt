@@ -42,10 +42,10 @@ INCLUDE(CheckCSourceCompiles)
 #==============================================================================
 
 # Allow the developer to select if Dynamic or Static libraries are built
-OPTION(BUILD_SHARED_LIBS "Build Shared Libraries" ON)
+OPTION(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 
 # Allow curl dependency to be disabled with "-DUSE_CURL=OFF":
-OPTION(USE_CURL "USE_CURL" ON)
+OPTION(USE_CURL "USE_CURL" OFF)
 
 OPTION(USE_PTHREADS "Thread-safe build (using pthreads)" OFF)
 
@@ -81,6 +81,12 @@ IF(NOT WIN32)
    ENDIF()
 ENDIF(NOT WIN32)
 
+#* -------------------------------------------------------------------------- *#
+IF (EMSCRIPTEN)
+    add_definitions(-Df2cFortran)
+ENDIF (EMSCRIPTEN)
+#* -------------------------------------------------------------------------- *#
+
 IF(USE_PTHREADS)
    FIND_PACKAGE(Threads REQUIRED)
    ADD_DEFINITIONS(-D_REENTRANT)
@@ -92,10 +98,12 @@ IF(USE_BZIP2)
 ENDIF(USE_BZIP2)
 
 # Math library (not available in MSVC or MINGW)
-IF(MSVC OR MINGW)
-   SET(M_LIB "")
-ELSE()
-   FIND_LIBRARY(M_LIB m)
+IF (NOT EMSCRIPTEN)
+    IF (MSVC OR MINGW)
+        SET(M_LIB "")
+    ELSE()
+        FIND_LIBRARY(M_LIB m)
+    ENDIF()
 ENDIF()
 
 # Support for remote file drivers is not implemented for native Windows:

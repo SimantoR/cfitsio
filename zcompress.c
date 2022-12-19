@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include "zlib.h"  
+#include <zlib.h>
 
 #define GZBUFSIZE 115200    /* 40 FITS blocks */
 #define BUFFINCR   28800    /* 10 FITS blocks */
